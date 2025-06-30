@@ -1,7 +1,7 @@
 package com.nitheesh.review_service.service;
 
+import com.nitheesh.review_service.client.BookingClient;
 import com.nitheesh.review_service.client.HotelClient;
-import com.nitheesh.review_service.client.UserClient;
 import com.nitheesh.review_service.dto.Hotel;
 import com.nitheesh.review_service.dto.ReviewRequest;
 import com.nitheesh.review_service.dto.ReviewResponse;
@@ -24,28 +24,24 @@ public class ReviewService {
     private HotelClient hotelClient;
 
     @Autowired
-    private UserClient userClient;
+    private BookingClient bookingClient;
+
 
 
     public ReviewResponse createReview(ReviewRequest reviewRequest) {
-        User user = userClient.getUser(reviewRequest.getUserId());
-        if(user==null){
-            throw new RuntimeException("No user found");
+        if(bookingClient.checkBooking(reviewRequest.getHotelId(),reviewRequest.getUserId())){
+            Review review = new Review();
+            review.setComment(reviewRequest.getComment());
+            review.setUserId(reviewRequest.getUserId());
+            review.setHotelId(reviewRequest.getHotelId());
+            review.setRating(reviewRequest.getRating());
+
+            repository.save(review);
+            updateRating(reviewRequest.getHotelId());
+            return  mapToDto(review);
+        }else{
+            throw new RuntimeException("No booking found");
         }
-        Hotel hotel = hotelClient.getHotel(reviewRequest.getHotelId());
-        if(hotel==null){
-            throw new RuntimeException("No hotel found");
-        }
-
-        Review review = new Review();
-        review.setComment(reviewRequest.getComment());
-        review.setUserId(user.getId());
-        review.setHotelId(hotel.getId());
-        review.setRating(reviewRequest.getRating());
-
-        repository.save(review);
-
-        return  mapToDto(review);
     }
 
     private ReviewResponse mapToDto(Review review) {
@@ -99,6 +95,14 @@ public class ReviewService {
         }
 
         repository.save(existingReview);
+        updateRating(reviewRequest.getHotelId());
         return mapToDto(existingReview);
     }
+
+    public void updateRating(String hotelId){
+        float rating =  repository.findAverageRatingByHotelId(hotelId);
+        hotelClient.updateRating(hotelId,rating);
+    }
+
+
 }

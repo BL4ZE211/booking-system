@@ -105,4 +105,10 @@ public class BookingService {
 
         return mapToDto(existingBooking);
     }
+
+    public boolean checkBooking(String hotelId , String userId){
+        return bookingRepository.existsByHotelIdAndUserId(hotelId,userId);
+    }
+
+
 }

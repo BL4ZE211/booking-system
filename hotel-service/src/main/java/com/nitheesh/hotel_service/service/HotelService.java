@@ -79,4 +79,16 @@ public class HotelService {
 
         return mapToDto(hotel);
     }
+
+    public HotelResponseDto updateRating(String hotelId, float rating) {
+        Hotel hotel = hotelRepository.findById(hotelId).orElseThrow(
+                ()-> new RuntimeException("No user found "));
+
+        hotel.setRating(rating);
+
+        hotelRepository.save(hotel);
+
+        return mapToDto(hotel);
+
+    }
 }

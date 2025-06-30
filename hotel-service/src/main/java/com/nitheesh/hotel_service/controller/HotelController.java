@@ -39,4 +39,9 @@ public class HotelController {
     public HotelResponseDto updateHotelDetails(@PathVariable String  id,@RequestBody HoterlRequestDto hoterlRequestDto){
         return hotelService.updateDetails(id,hoterlRequestDto);
     }
+
+    @PutMapping("/{hotelId}/{rating}")
+    public HotelResponseDto updateRating(@PathVariable String hotelId,@PathVariable float rating){
+        return hotelService.updateRating(hotelId,rating);
+    }
 }

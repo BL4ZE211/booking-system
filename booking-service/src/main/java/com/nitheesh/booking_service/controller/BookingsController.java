@@ -21,8 +21,13 @@ public class BookingsController {
     }
 
     @GetMapping
-    public List<BookingResponse> getAllBokkings(){
+    public List<BookingResponse> getAllBookings(){
         return bookingService.getAllbookings();
+    }
+
+    @GetMapping("/{hotelId}/{userId}")
+    public boolean checkBooking(@PathVariable String hotelId, @PathVariable String userId){
+        return bookingService.checkBooking(hotelId,userId);
     }
 
     @GetMapping("/{id}")
