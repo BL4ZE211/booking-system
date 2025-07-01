@@ -30,7 +30,7 @@ public class HotelController {
         return  hotelService.gtHotelById(id);
     }
 
-    @DeleteMapping("/{}id")
+    @DeleteMapping("/{id}")
     public void deletHotel(@PathVariable String id){
         hotelService.deleteHotel(id);
     }
